@@ -1,0 +1,137 @@
+html {
+    width: 80%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0 auto;
+    font-size: 16px;
+    background-color:#EBEAEE;
+}
+body {
+    height: 100%;
+    min-height: 100%;
+    line-height: 1.75;
+    background-color: #EBEAEE;
+    color: #165662;
+}
+a:link:hover {
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    text-decoration: underline;
+    cursor: pointer;
+    cursor: hand;
+}
+input[type=submit], button {
+    cursor: pointer;
+    cursor: hand;
+}
+@media(max-width: 900px) {
+    html {
+        font-size: 14px !important;
+        width: 80% !important;
+    }
+}
+@media(max-width: 480px) {
+    html {
+        font-size: 12px !important;
+        width: 90% !important;
+    }
+}
+@media(max-width: 320px) {
+    html {
+        font-size: 12px !important;
+        width: 100% !important;
+    }
+}
+
+.scrollable-table {
+    max-height: 40vh;
+    overflow: auto;
+    text-align: center;
+    width: 100%;
+    min-height: 200px;
+}
+
+.status-table {
+    max-height: 30vh;
+    overflow: auto;
+    width: 100%;
+    min-height: 100px;
+}
+
+#statusTable {
+    text-align: left;
+}
+
+.cardSpaces {
+    margin-bottom: 35px;
+}
+
+.card-header {
+    font-size: 16pt;
+}
+
+.table thead {
+    vertical-align: middle;
+}
+
+h3 {
+    display: inline-block;
+}
+
+.dropdown{
+    display: inline-block;
+    float: right;
+}
+
+#createCal {
+    text-align: center;
+}
+
+#statusBox {
+    border: none;
+    padding: 5px;
+    max-height: 200px;
+    overflow: scroll;
+}
+
+#topPage {
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#fileLog_footer {
+    text-align: right;
+}
+
+#addPanel {
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+#createCalButton {
+    margin-right: 15px;
+}
+
+.customBut {
+    border-color: #165662;
+    background-color: #EBEAEE;
+}
+
+.card-header {
+    font-weight: 600;
+}
+
+.propIcon {
+    margin-left: 5px;
+    color: #3AA167;
+}
+
+.alarmIcon{
+    color: #3AA167;
+}
+
+#evtText {
+    font-weight: 500;
+}

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Calendar Viewer</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="CHANGE ME" />
+  <meta name="keywords" content="CHANGE ME" />
+  <meta name="author" content="CHANGE ME" />
+  <!-- Load jquery, bootstrap -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" type="text/css" href="/style.css" />
+  <!-- Custom CSS End -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body>
+
+  <div id="topPage">
+    <h2>Welcome to the Calendar Viewer</h2>
+    <p>View calendar files and their components, add new events and create new calendar file</p>
+    <button type="button" class="btn" data-toggle="modal" data-target="#loginModal">Login</button>
+  </div>
+
+  <div class="card text-center cardSpaces" id="statusCard">
+    <div class="card-header">
+      Status Panel
+    </div>
+    <div class="card-body">
+      <div class="status-table">
+        <table class="table table-striped" id="statusTable">
+          <tbody id="statusTabBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer text-muted">
+      <button type="button" class="btn customBut" onclick="clearStatusPanel()" id="clearButton"
+        onmouseover="this.style.background='#80B3B5'" onmouseout="this.style.background='#EBEAEE'">Clear</button>
+    </div>
+  </div>
+
+  <div class="card text-center cardSpaces" id="fileLogCard">
+    <div class="card-header">
+      File Log
+    </div>
+    <div class="card-body">
+      <div class="scrollable-table">
+        <table class="table table-striped" id="fileTable">
+          <thead>
+            <th>Filename (click to download)</th>
+            <th>Version</th>
+            <th>Product ID</th>
+            <th>Number of events</th>
+            <th>Number of properties</th>
+          </thead>
+          <tbody id="fileTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer text-muted" id="fileLog_footer">
+      <div id="uploadDiv">
+        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data">
+          <input id="toBeUploaded" type="file" name="uploadFile" />
+          <input type="submit" value="Upload file" />
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="card text-center cardSpaces" id="calViewCard">
+    <div class="card-header">
+      Calendar View
+      <div class="dropdown">
+        <button class="btn dropdown-toggle customBut" type="button" id="fileDDButton" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false" onmouseover="this.style.background='#80B3B5'"
+          onmouseout="this.style.background='#EBEAEE'">
+          Filename
+        </button>
+        <div class="dropdown-menu" id="fileDropdown">
+          <div class="dropdown-header">Select a file:</div>
+          <div class="dropdown-divider"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="scrollable-table">
+        <table class="table table-striped" id="calTable">
+          <thead id="calTableHead">
+            <th>Event No</th>
+            <th>Start Date</th>
+            <th>Start Time</th>
+            <th>Summary</th>
+            <th>Props No</th>
+            <th>Alarms No</th>
+            <th>Actions</th>
+          </thead>
+          <tbody id="calTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="addPanel">
+    <button type="button" class="btn customBut" id="createCalButton" data-toggle="modal" data-target="#createCalModal"
+      onmouseover="this.style.background='#80B3B5'" onmouseout="this.style.background='#EBEAEE'">
+      Create new calendar
+    </button>
+    <button type="button" class="btn customBut" id="createEvtButton" data-toggle="modal" data-target="#createEvtModal"
+      onmouseover="this.style.background='#80B3B5'" onmouseout="this.style.background='#EBEAEE'">
+      Create new event
+    </button>
+  </div>
+
+  <div class="modal fade" id="createCalModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createCalTitle">Create new calendar</h5>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <label for="filenameBox">File name</label>
+                <input type="text" class="form-control" id="filenameBox" placeholder="Enter file name" required>
+                <small class="sumHelpBox" class="form-text text-muted">
+                  The file name has to end with ".ics". E.g calendarOne.ics
+                </small>
+              </div>
+              <div class="col-sm-6">
+                <label for="versionBox">Version</label>
+                <input type="text" class="form-control" id="versionBox" placeholder="Enter numbers only" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="prodIDBox">Product ID</label>
+              <input type="text" class="form-control" id="prodIDBox" placeholder="Enter product version" required>
+            </div>
+            <label id="evtText">Create the First Event</label>
+            <div class="form-group">
+              <label for="UID_cBox">UID</label>
+              <input type="text" class="form-control" id="UID_cBox" placeholder="Enter UID" required>
+            </div>
+            <label>Creation Date-Time</label>
+            <div class="form-group row">
+              <div class="col-sm-5">
+                <input type="date" class="form-control" id="stamp_cDate" required>
+              </div>
+              <div class="col-sm-5">
+                <input type="text" class="form-control" id="stamp_cTime" placeholder="Enter time" required>
+                <small class="sumHelpBox" class="form-text text-muted">
+                  Format:HH:MM:SS,e.g: 21:26:00
+                </small>
+              </div>
+              <div class="form-check col-sm-2">
+                <input class="form-check-input" type="checkbox" value="" id="stamp_cUTC">
+                <label class="form-check-label" for="stamp_cUTC">
+                  UTC
+                </label>
+              </div>
+            </div>
+            <label>Start Date-Time</label>
+            <div class="form-group row">
+              <div class="col-sm-5">
+                <input type="date" class="form-control" id="start_cDate" required>
+              </div>
+              <div class="col-sm-5">
+                <input type="text" class="form-control" id="start_cTime" placeholder="Enter time" required>
+                <small class="sumHelpBox" class="form-text text-muted">
+                Format:HH:MM:SS,e.g: 21:26:00
+                </small>
+              </div>
+              <div class="form-check col-sm-2">
+                <input class="form-check-input" type="checkbox" value="" id="start_cUTC">
+                <label class="form-check-label" for="start_cUTC">
+                  UTC
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="summary_cBox">Summary</label>
+              <textarea class="form-control" id="summary_cBox" rows="5"></textarea>
+              <small class="sumHelpBox" class="form-text text-muted">
+                This is optional
+              </small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn customBut" data-dismiss="modal" onclick="resetCalModal()">Close</button>
+          <button type="button" class="btn customBut" onclick="createCalFile()">Save Calendar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="createEvtModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header cent">
+          <h5 class="modal-title" id="createCalTitle">Create new Event</h5>
+        </div>
+        <div class="modal-body container-fluid">
+          <form>
+            <label for="evtFileDDButton">Files</label>
+            <select id="evtFileDDButton" class="form-control">
+              <option selected>Choose a file</option>
+            </select>
+            <div class="form-group">
+              <label for="UIDBox">UID</label>
+              <input type="text" class="form-control" id="UIDBox" placeholder="Enter UID" required>
+            </div>
+            <label>Creation Date-Time</label>
+            <div class="form-group row">
+              <div class="col-sm-5">
+                <input type="date" class="form-control" id="dtStampDate" required>
+              </div>
+              <div class="col-sm-5">
+                <input type="text" class="form-control" id="dtStampTime" placeholder="Enter time" required>
+                <small class="sumHelpBox" class="form-text text-muted">
+                  Format:HH:MM:SS,e.g: 21:26:00
+                </small>
+              </div>
+              <div class="form-check col-sm-2">
+                <input class="form-check-input" type="checkbox" value="" id="isStampUTC">
+                <label class="form-check-label" for="isStampUTC">
+                  UTC
+                </label>
+              </div>
+            </div>
+            <label>Start Date-Time</label>
+            <div class="form-group row">
+              <div class="col-sm-5">
+                <input type="date" class="form-control" id="dtStartDate" required>
+              </div>
+              <div class="col-sm-5">
+                <input type="text" class="form-control" id="dtStartTime" placeholder="Enter time
+                " required>
+                <small class="sumHelpBox" class="form-text text-muted">
+                  Format:HH:MM:SS,e.g: 21:26:00
+                </small>
+              </div>
+              <div class="form-check col-sm-2">
+                <input class="form-check-input" type="checkbox" value="" id="isStartUTC">
+                <label class="form-check-label" for="isStartUTC">
+                  UTC
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="summaryBox">Summary</label>
+              <textarea class="form-control" id="summaryBox" rows="5"></textarea>
+              <small class="sumHelpBox" class="form-text text-muted">
+                This is optional
+              </small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer cent">
+          <button type="button" class="btn customBut" data-dismiss="modal" onclick="resetEvtModal()">Close</button>
+          <button type="button" class="btn customBut" onclick="addEvent()">Save Event</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" id="loginModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Login</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="usernameBox">Username</label>
+            <input type="text" class="form-control" id="usernameBox" placeholder="Enter username" required>
+          </div>
+          <div class="form-group">
+            <label for="dbBox">Database</label>
+            <input type="text" class="form-control" id="dbBox" placeholder="Enter database name" required>
+          </div>
+          <div class="form-group">
+            <label for="usernameBox">Password</label>
+            <input type="password" class="form-control" id="pwdBox">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="setDBConnection()">Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave me at the bottom of body -->
+  <script src="/index.js"></script>
+</body>
+
+</html>
